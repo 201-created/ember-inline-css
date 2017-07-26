@@ -23,7 +23,7 @@ CSSReader.prototype.build = function() {
   let cssPath = fs.readdirSync(this.inputPaths[0]).find(file => file.match(/app.*\.css/));
   var injector = new CSSInjector({
     template: `${fs.readFileSync(path.join(this.inputPaths[0], 'index.html'))}`,
-    css: fs.readFileSync(path.join(this.inputPaths[0], cssPath)),
+    css: `${fs.readFileSync(path.join(this.inputPaths[0], cssPath))}`,
     placeholder: PLACEHOLDER
   });
 

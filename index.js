@@ -7,7 +7,7 @@ var CSSInjector = require('./lib/css_injector');
 var path = require('path');
 var fs = require('fs');
 
-var PLACEHOLDER = new RegExp('<link rel="stylesheet" href=".*app.css">');
+var PLACEHOLDER = new RegExp('<link rel="stylesheet" href=".*app.*\.css">');
 
 function CSSReader(inputNodes, options) {
   options = options || {};
@@ -20,9 +20,10 @@ CSSReader.prototype = Object.create(Plugin.prototype);
 CSSReader.prototype.constructor = CSSReader;
 
 CSSReader.prototype.build = function() {
+  let cssPath = fs.readdirSync(this.inputPaths[0]).find(file => file.match(/app.*\.css/));
   var injector = new CSSInjector({
     template: `${fs.readFileSync(path.join(this.inputPaths[0], 'index.html'))}`,
-    css: fs.readFileSync(path.join(this.inputPaths[0], 'app.css')),
+    css: fs.readFileSync(path.join(this.inputPaths[0], cssPath)),
     placeholder: PLACEHOLDER
   });
 

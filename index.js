@@ -13,26 +13,44 @@ function CSSReader(inputNodes, options) {
     annotation: options.annotation
   });
   this.options = options;
+  this._vendorFileRegExp = new RegExp(`vendor.*\.css`);
   this._cssFileRegExp = new RegExp(`${this.options.appName}.*\.css`);
+  this._vendorStylesheetLinkRegExp = new RegExp(`<link rel="stylesheet" href=".*vendor.*\.css"[^>]*>`);
   this._stylesheetLinkRegExp = new RegExp(`<link rel="stylesheet" href=".*${this.options.appName}.*\.css"[^>]*>`);
 }
 CSSReader.prototype = Object.create(Plugin.prototype);
 CSSReader.prototype.constructor = CSSReader;
 
 CSSReader.prototype.build = function() {
+  var injector = new CSSInjector({
+    template: `${fs.readFileSync(path.join(this.inputPaths[0], 'index.html'))}`,
+    css: `${this.readVendorCss()}
+${this.readAppCss()}`,
+    placeholder: this._stylesheetLinkRegExp,
+    vendorPlaceholder: this._vendorStylesheetLinkRegExp
+  });
+
+  injector.write(path.join(this.outputPath, 'index.html'));
+};
+
+CSSReader.prototype.readAppCss = function() {
   let cssPath = fs.readdirSync(this.inputPaths[0]).find(file => file.match(this._cssFileRegExp));
   /* Ember files are in a subdirectory */
   if (!cssPath) {
     let assetCssPath = fs.readdirSync(path.join(this.inputPaths[0], 'assets')).find(file => file.match(this._cssFileRegExp));
     cssPath = `assets/${assetCssPath}`;
   }
-  var injector = new CSSInjector({
-    template: `${fs.readFileSync(path.join(this.inputPaths[0], 'index.html'))}`,
-    css: `${fs.readFileSync(path.join(this.inputPaths[0], cssPath))}`,
-    placeholder: this._stylesheetLinkRegExp
-  });
+  return `${fs.readFileSync(path.join(this.inputPaths[0], cssPath))}`;
+};
 
-  injector.write(path.join(this.outputPath, 'index.html'));
+CSSReader.prototype.readVendorCss = function() {
+  let cssPath = fs.readdirSync(this.inputPaths[0]).find(file => file.match(this._vendorFileRegExp));
+  /* Ember files are in a subdirectory */
+  if (!cssPath) {
+    let assetCssPath = fs.readdirSync(path.join(this.inputPaths[0], 'assets')).find(file => file.match(this._vendorFileRegExp));
+    cssPath = `assets/${assetCssPath}`;
+  }
+  return cssPath ? `${fs.readFileSync(path.join(this.inputPaths[0], cssPath))}` : ``;
 };
 
 module.exports = {

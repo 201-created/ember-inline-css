@@ -48,7 +48,9 @@ CSSReader.prototype.readVendorCss = function() {
   /* Ember files are in a subdirectory */
   if (!cssPath) {
     let assetCssPath = fs.readdirSync(path.join(this.inputPaths[0], 'assets')).find(file => file.match(this._vendorFileRegExp));
-    cssPath = `assets/${assetCssPath}`;
+    if (assetCssPath) {
+      cssPath = `assets/${assetCssPath}`;
+    }
   }
   return cssPath ? `${fs.readFileSync(path.join(this.inputPaths[0], cssPath))}` : ``;
 };

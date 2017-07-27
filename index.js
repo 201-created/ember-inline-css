@@ -14,7 +14,7 @@ function CSSReader(inputNodes, options) {
   });
   this.options = options;
   this._cssFileRegExp = new RegExp(`${this.options.appName}.*\.css`);
-  this._stylesheetLinkRegExp = new RegExp(`<link rel="stylesheet" href=".*${this.options.appName}.*\.css">`);
+  this._stylesheetLinkRegExp = new RegExp(`<link rel="stylesheet" href=".*${this.options.appName}.*\.css"[^>]*>`);
 }
 CSSReader.prototype = Object.create(Plugin.prototype);
 CSSReader.prototype.constructor = CSSReader;

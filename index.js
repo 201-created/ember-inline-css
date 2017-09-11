@@ -84,5 +84,6 @@ module.exports = {
       });
     }
     return tree;
-  }
+  },
+  CSSReader
 };

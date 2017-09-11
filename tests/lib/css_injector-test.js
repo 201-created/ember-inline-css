@@ -9,43 +9,39 @@ const CSSInjector = require('../../lib/css_injector.js');
 
 const test = QUnit.test;
 
-QUnit.module('CSSReader', function(hooks) {
-  let input;
+QUnit.module('CSSInjector', function(hooks) {
+  let input, output;
 
   hooks.beforeEach(co.wrap(function* () {
     input = yield createTempDir();
+    output = yield createTempDir();
   }));
 
   hooks.afterEach(co.wrap(function* () {
     yield input.dispose();
+    yield output.dispose();
   }));
 
-  test('does something', function(assert) {
+  test('injects css only for files specified as filePathsToInject argument', function(assert) {
     let fixture = {
       'assets': {
         'vendor.css': 'a { background-color: blue; }',
         'app.css': 'h1 { background-color: green; }'
       },
       'index.html': stripIndent`
-        foo-placeholder-regex
-        bar-vendorPlaceholder-regex
+        <link rel="stylesheet" href="/assets/vendor.css">
+        <link rel="stylesheet" href="/assets/app.css">
       `
     };
     input.write(fixture);
 
-    let appCss = fs.readFileSync(path.join(input.path(), 'assets', 'app.css'));
-    let vendorCss = fs.readFileSync(path.join(input.path(), 'assets', 'vendor.css'));
-
     let injector = new CSSInjector({
-      template: `${fs.readFileSync(path.join(input.path(), 'index.html'))}`,
-      css: `${vendorCss}${appCss}`,
-      placeholder: new RegExp('foo-placeholder-regex'),
-      vendorPlaceholder: new RegExp('bar-vendorPlaceholder-regex')
+      rootPath: input.path(),
+      filePathsToInject: [ 'assets/vendor.css' ]
     });
 
-    injector.write(path.join(input.path(), 'index.html'));
+    injector.write(path.join(output.path(), 'index.html'))
 
-    let output = fs.readFileSync(path.join(input.path(), 'index.html'), 'utf-8');
-    assert.equal(output, `<style>a { background-color: blue; }h1 { background-color: green; }</style>\n`);
+    assert.equal(output.read()['index.html'], `<style>a { background-color: blue; }</style>\n<link rel=\"stylesheet\" href=\"/assets/app.css\">`);
   });
 });

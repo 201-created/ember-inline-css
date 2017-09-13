@@ -1,6 +1,6 @@
 # ember-inline-css
 
-An Ember/Glimmer addon to inline app css.
+An [Ember](https://emberjs.com/) and [Glimmer](https://glimmerjs.com/) addon to inline CSS files into HTML.
 
 ## Installation
 
@@ -8,8 +8,9 @@ An Ember/Glimmer addon to inline app css.
 ember install ember-inline-css
 ```
 
+Then restart your Ember server. Your styles will be inlined!
+
 ## Usage
 
-This addon will replace the `<link>` tag importing app css with the contents of
-that file.
-
+This addon will take take the application and vendor CSS `<link>` tags in the
+application's `index.html` file and replace them with inline `<style>` tags.

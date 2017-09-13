@@ -1,6 +1,6 @@
 {
   "name": "ember-inline-css",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "An Ember/Glimmer addon to inline app css",
   "keywords": [
     "ember-addon"

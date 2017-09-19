@@ -67,4 +67,27 @@ QUnit.module('CSSInjector', function(hooks) {
 
     assert.equal(output.read()['index.html'], `<style>a { background-color: blue; }</style>\n<style>h1 { background-color: green; }</style>`);
   });
+
+  test('correctly matches and replaces the fingerprinted assets', function(assert) {
+    let fixture = {
+      'assets': {
+        'vendor.css': 'a { background-color: blue; }',
+        'app.css': 'h1 { background-color: green; }'
+      },
+      'index.html': stripIndent`
+        <link type="text/css" rel="stylesheet" href="/assets/vendor-225c0cfbe857d81d657f77007d4c62a7.css">
+        <link integrity="" rel="stylesheet" href="/assets/app.css">
+      `
+    };
+    input.write(fixture);
+
+    let injector = new CSSInjector({
+      rootPath: input.path(),
+      filePathsToInject: [ 'assets/vendor.css', 'assets/app.css' ]
+    });
+
+    injector.write(path.join(output.path(), 'index.html'))
+
+    assert.equal(output.read()['index.html'], `<style>a { background-color: blue; }</style>\n<style>h1 { background-color: green; }</style>`);
+  });
 });

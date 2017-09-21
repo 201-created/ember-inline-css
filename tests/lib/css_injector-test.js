@@ -71,7 +71,7 @@ QUnit.module('CSSInjector', function(hooks) {
   test('correctly matches and replaces the fingerprinted assets', function(assert) {
     let fixture = {
       'assets': {
-        'vendor.css': 'a { background-color: blue; }',
+        'vendor-225c0cfbe857d81d657f77007d4c62a7.css': 'a { background-color: blue; }',
         'app.css': 'h1 { background-color: green; }'
       },
       'index.html': stripIndent`

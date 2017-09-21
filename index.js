@@ -48,7 +48,7 @@ module.exports = {
           ];
         } else {
           filePathsToInject = [
-            this.app.options.outputPaths.app.css.vendor,
+            this.app.options.outputPaths.vendor.css,
             this.app.options.outputPaths.app.css.app
           ];
         }

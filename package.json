@@ -23,5 +23,8 @@
     "co": "^4.6.0",
     "common-tags": "^1.4.0",
     "qunitjs": "^2.4.0"
+  },
+  "ember-addon": {
+    "before": "broccoli-asset-rev"
   }
 }
